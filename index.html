@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sueldo UOM</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --list-bg: #1C1C1E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --accent-color: #0A84FF;
+            --separator-color: #38383A;
+            --danger-color: #FF453A;
+            --success-color: #32D74B;
+            --segmented-bg: #1C1C1E;
+            --segmented-active: #636366;
+            --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            padding: 20px 20px 10px 20px;
+        }
+
+        h1 {
+            font-size: 34px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.4px;
+        }
+
+        .month-info {
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 5px;
+            letter-spacing: -0.1px;
+        }
+
+        /* Segmented Control */
+        .segmented-control {
+            display: flex;
+            background-color: var(--segmented-bg);
+            border-radius: 8px;
+            padding: 2px;
+            margin: 10px 20px 25px 20px;
+        }
+
+        .segment-btn {
+            flex: 1;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .segment-btn.active {
+            background-color: var(--segmented-active);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
+        }
+
+        /* List Groups */
+        .list-group {
+            background-color: var(--list-bg);
+            border-radius: 10px;
+            margin: 0 20px 24px 20px;
+            overflow: hidden;
+        }
+
+        .list-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+            padding: 10px 16px;
+            border-bottom: 0.5px solid var(--separator-color);
+        }
+        .list-row:last-child { border-bottom: none; }
+
+        .list-label {
+            font-size: 17px;
+            display: flex;
+            flex-direction: column;
+            max-width: 65%;
+        }
+
+        .list-sublabel {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.3;
+        }
+
+        input[type="number"].config-input {
+            background-color: transparent;
+            border: none;
+            color: var(--accent-color);
+            font-size: 17px;
+            text-align: right;
+            width: 100px;
+            font-family: var(--font-family);
+            padding: 0;
+            appearance: textfield;
+        }
+        input[type="number"].config-input:focus { outline: none; color: var(--text-primary); }
+
+        .group-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin: 0 20px 6px 36px;
+            letter-spacing: -0.1px;
+        }
+
+        /* Steppers */
+        .stepper-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stepper-btn {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background-color: #2C2C2E;
+            color: var(--accent-color);
+            border: none;
+            font-size: 22px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            padding-bottom: 2px;
+        }
+        
+        .stepper-btn:active {
+            opacity: 0.7;
+        }
+        
+        .stepper-value {
+            font-size: 19px; width: 35px; text-align: center;
+            color: var(--text-primary); border: none; background: transparent;
+            font-family: var(--font-family);
+            padding: 0;
+        }
+        
+        .stepper-value:focus {
+            outline: none;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        /* Summary Area */
+        .summary-label { font-size: 15px; }
+        .summary-value { font-size: 15px; color: var(--text-secondary); }
+        .total-row { font-weight: 600; }
+        .total-row .summary-label { font-size: 17px; }
+        .total-row .summary-value { font-size: 20px; color: var(--text-primary); }
+        .value-red { color: var(--danger-color) !important; }
+        .value-green { color: var(--success-color) !important; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Liquidación</h1>
+    <div id="monthInfo" class="month-info"></div>
+</div>
+
+<div class="segmented-control">
+    <div class="segment-btn active" id="btn1ra" onclick="setQuincena(1)">1ra Quincena</div>
+    <div class="segment-btn" id="btn2da" onclick="setQuincena(2)">2da Quincena</div>
+</div>
+
+<div class="group-title">Configuración Salarial</div>
+<div class="list-group">
+    <div class="list-row">
+        <div class="list-label">
+            Valor por hora
+        </div>
+        <div>
+            <span style="color:var(--text-secondary); margin-right:2px;">$</span>
+            <input type="number" id="valorHora" class="config-input" value="5772.04" step="0.01" oninput="calculate()">
+        </div>
+    </div>
+    <div class="list-row hidden" id="rowInputBono">
+        <div class="list-label">
+            Bono / Premios
+            <span class="list-sublabel">Toca para editar (Bruto)</span>
+        </div>
+        <div>
+            <span style="color:var(--text-secondary); margin-right:2px;">$</span>
+            <input type="number" id="bonoAmount" class="config-input" value="300000" oninput="calculate()">
+        </div>
+    </div>
+</div>
+
+<div class="group-title">Carga de Horas (Total Quincena)</div>
+<div class="list-group">
+    <div class="list-row">
+        <div class="list-label">
+            Extras al 50%
+            <span class="list-sublabel">L a V (después de 15hs)</span>
+        </div>
+        <div class="stepper-control">
+            <button class="stepper-btn" onclick="updateHours('horas50', -1)">-</button>
+            <input type="number" id="horas50" class="stepper-value" value="0" oninput="calculate()">
+            <button class="stepper-btn" onclick="updateHours('horas50', 1)">+</button>
+        </div>
+    </div>
+    
+    <div class="list-row">
+        <div class="list-label">
+            Extras al 100%
+            <span class="list-sublabel">Sábados > 13hs o Domingos</span>
+        </div>
+        <div class="stepper-control">
+            <button class="stepper-btn" onclick="updateHours('horas100', -1)">-</button>
+            <input type="number" id="horas100" class="stepper-value" value="0" oninput="calculate()">
+            <button class="stepper-btn" onclick="updateHours('horas100', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="list-row">
+        <div class="list-label">
+            Normales Finde
+            <span class="list-sublabel">Sábados de 6 a 13hs</span>
+        </div>
+        <div class="stepper-control">
+            <button class="stepper-btn" onclick="updateHours('horasNormFinde', -1)">-</button>
+            <input type="number" id="horasNormFinde" class="stepper-value" value="0" oninput="calculate()">
+            <button class="stepper-btn" onclick="updateHours('horasNormFinde', 1)">+</button>
+        </div>
+    </div>
+</div>
+
+<div class="group-title">Resumen (<span id="diasHabilesStr">0</span> días hábiles)</div>
+<div class="list-group">
+    <div class="list-row">
+        <div class="list-label">
+            Sueldo Base (L a V)
+        </div>
+        <span class="summary-value" id="resSueldoBase">$0</span>
+    </div>
+    
+    <div class="list-row hidden" id="rowResNormalesFinde">
+        <div class="list-label">
+            Normales Finde
+        </div>
+        <span class="summary-value" id="resMontoNormalesFinde">$0</span>
+    </div>
+    
+    <div class="list-row hidden" id="rowResBono">
+        <span class="summary-label">Bonos (Bruto)</span>
+        <span class="summary-value" id="resBono">$0</span>
+    </div>
+    
+    <div class="list-row">
+        <span class="summary-label">Horas Extras</span>
+        <span class="summary-value" id="resExtraBruto">$0</span>
+    </div>
+    
+    <div class="list-row">
+        <div class="list-label">
+            Retenciones (19.5%)
+            <span class="list-sublabel" style="font-size: 10px;">Jubilación, PAMI, OS, UOM</span>
+        </div>
+        <span class="summary-value value-red" id="resImpuestos">$0</span>
+    </div>
+    
+    <div class="list-row total-row">
+        <span class="summary-label">Total a Cobrar Neto</span>
+        <span class="summary-value value-green" id="resTotal">$0</span>
+    </div>
+</div>
+
+<script>
+    let currentQuincena = 1;
+    let diasHabiles = 0;
+    const now = new Date();
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 2 }).format(amount);
+    };
+
+    function haptic() {
+        if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(10);
+    }
+
+    function updateHours(inputId, change) {
+        haptic();
+        const input = document.getElementById(inputId);
+        let val = parseInt(input.value) || 0;
+        val += change;
+        if (val < 0) val = 0;
+        input.value = val;
+        calculate();
+    }
+
+    function getWorkingDays(year, month, quincena) {
+        let count = 0;
+        let startDay = quincena === 1 ? 1 : 16;
+        let endDay = quincena === 1 ? 15 : new Date(year, month + 1, 0).getDate();
+        for (let d = startDay; d <= endDay; d++) {
+            let dayOfWeek = new Date(year, month, d).getDay();
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) count++;
+        }
+        return count;
+    }
+
+    function setQuincena(q) {
+        haptic();
+        currentQuincena = q;
+        document.getElementById('btn1ra').classList.remove('active');
+        document.getElementById('btn2da').classList.remove('active');
+        if(q === 1) document.getElementById('btn1ra').classList.add('active');
+        if(q === 2) document.getElementById('btn2da').classList.add('active');
+        
+        const rowInputBono = document.getElementById('rowInputBono');
+        const rowResBono = document.getElementById('rowResBono');
+        if (q === 2) {
+            rowInputBono.classList.remove('hidden');
+            rowResBono.classList.remove('hidden');
+        } else {
+            rowInputBono.classList.add('hidden');
+            rowResBono.classList.add('hidden');
+        }
+        
+        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        document.getElementById('monthInfo').innerText = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+        diasHabiles = getWorkingDays(now.getFullYear(), now.getMonth(), currentQuincena);
+        document.getElementById('diasHabilesStr').innerText = diasHabiles;
+        
+        calculate();
+    }
+
+    function calculate() {
+        const valorHora = parseFloat(document.getElementById('valorHora').value) || 0;
+        const bonoAmount = parseFloat(document.getElementById('bonoAmount').value) || 0;
+        
+        // Obtener valores de los inputs de horas
+        const horas50 = parseInt(document.getElementById('horas50').value) || 0;
+        const horas100 = parseInt(document.getElementById('horas100').value) || 0;
+        const horasNormFinde = parseInt(document.getElementById('horasNormFinde').value) || 0;
+
+        // 1. Sueldo Base (solo días de semana)
+        const sueldoBaseBruto = diasHabiles * 9 * valorHora;
+        
+        // 2. Bono (solo 2da quincena)
+        let bonoBruto = currentQuincena === 2 ? bonoAmount : 0;
+        
+        // 3. Montos de las horas cargadas
+        const montoNormalesFinde = horasNormFinde * valorHora;
+        const extraBruto = (horas50 * (valorHora * 1.5)) + (horas100 * (valorHora * 2));
+        
+        // Ocultar/Mostrar fila de Normales Finde en el resumen
+        if (horasNormFinde > 0) {
+            document.getElementById('rowResNormalesFinde').classList.remove('hidden');
+            document.getElementById('resMontoNormalesFinde').innerText = formatCurrency(montoNormalesFinde);
+        } else {
+            document.getElementById('rowResNormalesFinde').classList.add('hidden');
+        }
+
+        // 4. Total Bruto
+        const totalBruto = sueldoBaseBruto + montoNormalesFinde + bonoBruto + extraBruto;
+
+        // 5. Retenciones
+        const totalRetenciones = totalBruto * 0.195;
+
+        // 6. Sueldo Neto
+        const totalNeto = totalBruto - totalRetenciones;
+
+        // 7. Actualizar UI
+        document.getElementById('resSueldoBase').innerText = formatCurrency(sueldoBaseBruto);
+        document.getElementById('resBono').innerText = formatCurrency(bonoBruto);
+        document.getElementById('resExtraBruto').innerText = formatCurrency(extraBruto);
+        document.getElementById('resImpuestos').innerText = "-" + formatCurrency(totalRetenciones);
+        document.getElementById('resTotal').innerText = formatCurrency(totalNeto);
+    }
+
+    // Inicializar
+    setQuincena(1);
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sueldo UOM</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --list-bg: #1C1C1E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --accent-color: #0A84FF;
+            --separator-color: #38383A;
+            --danger-color: #FF453A;
+            --success-color: #32D74B;
+            --segmented-bg: #1C1C1E;
+            --segmented-active: #636366;
+            --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            padding: 20px 20px 10px 20px;
+        }
+
+        h1 {
+            font-size: 34px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.4px;
+        }
+
+        .month-info {
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 5px;
+            letter-spacing: -0.1px;
+        }
+
+        /* Segmented Control */
+        .segmented-control {
+            display: flex;
+            background-color: var(--segmented-bg);
+            border-radius: 8px;
+            padding: 2px;
+            margin: 10px 20px 25px 20px;
+        }
+
+        .segment-btn {
+            flex: 1;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .segment-btn.active {
+            background-color: var(--segmented-active);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
+        }
+
+        /* List Groups */
+        .list-group {
+            background-color: var(--list-bg);
+            border-radius: 10px;
+            margin: 0 20px 24px 20px;
+            overflow: hidden;
+        }
+
+        .list-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+            padding: 10px 16px;
+            border-bottom: 0.5px solid var(--separator-color);
+        }
+        .list-row:last-child { border-bottom: none; }
+
+        .list-label {
+            font-size: 17px;
+            display: flex;
+            flex-direction: column;
+            max-width: 65%;
+        }
+
+        .list-sublabel {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.3;
+        }
+
+        /* Ocultar botones nativos de los inputs de número (el 3er botón que veías) */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield; /* Para otros navegadores */
+        }
+
+        input[type="number"].config-input {
+            background-color: transparent;
+            border: none;
+            color: var(--accent-color);
+            font-size: 17px;
+            text-align: right;
+            width: 100px;
+            font-family: var(--font-family);
+            padding: 0;
+        }
+        input[type="number"].config-input:focus { outline: none; color: var(--text-primary); }
+
+        .group-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin: 0 20px 6px 36px;
+            letter-spacing: -0.1px;
+        }
+
+        /* Steppers */
+        .stepper-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stepper-btn {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background-color: #2C2C2E;
+            color: var(--accent-color);
+            border: none;
+            font-size: 22px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            padding-bottom: 2px;
+        }
+        
+        .stepper-btn:active {
+            opacity: 0.7;
+        }
+        
+        .stepper-value {
+            font-size: 19px; width: 35px; text-align: center;
+            color: var(--text-primary); border: none; background: transparent;
+            font-family: var(--font-family);
+            padding: 0;
+        }
+        
+        .stepper-value:focus {
+            outline: none;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        /* Summary Area */
+        .summary-label { font-size: 15px; }
+        .summary-value { font-size: 15px; color: var(--text-secondary); }
+        .total-row { font-weight: 600; }
+        .total-row .summary-label { font-size: 17px; }
+        .total-row .summary-value { font-size: 20px; color: var(--text-primary); }
+        .value-red { color: var(--danger-color) !important; }
+        .value-green { color: var(--success-color) !important; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Liquidación</h1>
+    <div id="monthInfo" class="month-info"></div>
+</div>
+
+<div class="segmented-control">
+    <div class="segment-btn active" id="btn1ra" onclick="setQuincena(1)">1ra Quincena</div>
+    <div class="segment-btn" id="btn2da" onclick="setQuincena(2)">2da Quincena</div>
+</div>
+
+<div class="group-title">Configuración Salarial</div>
+<div class="list-group">
+    <div class="list-row">
+        <div class="list-label">
+            Valor por hora
+        </div>
+        <div>
+            <span style="color:var(--text-secondary); margin-right:2px;">$</span>
+            <input type="number" id="valorHora" class="config-input" value="5772.04" step="0.01" oninput="calculate()">
+        </div>
+    </div>
+    <div class="list-row hidden" id="rowInputBono">
+        <div class="list-label">
+            Bono / Premios
+            <span class="list-sublabel">Toca para editar (Bruto)</span>
+        </div>
+        <div>
+            <span style="color:var(--text-secondary); margin-right:2px;">$</span>
+            <input type="number" id="bonoAmount" class="config-input" value="300000" oninput="calculate()">
+        </div>
+    </div>
+</div>
+
+<div class="group-title">Carga de Horas (Total Quincena)</div>
+<div class="list-group">
+    <div class="list-row">
+        <div class="list-label">
+            Extras al 50%
+            <span class="list-sublabel">L a V (después de 15hs)</span>
+        </div>
+        <div class="stepper-control">
+            <button class="stepper-btn" onclick="updateHours('horas50', -1)">-</button>
+            <input type="number" id="horas50" class="stepper-value" value="0" oninput="calculate()">
+            <button class="stepper-btn" onclick="updateHours('horas50', 1)">+</button>
+        </div>
+    </div>
+    
+    <div class="list-row">
+        <div class="list-label">
+            Extras al 100%
+            <span class="list-sublabel">Sábados > 13hs o Domingos</span>
+        </div>
+        <div class="stepper-control">
+            <button class="stepper-btn" onclick="updateHours('horas100', -1)">-</button>
+            <input type="number" id="horas100" class="stepper-value" value="0" oninput="calculate()">
+            <button class="stepper-btn" onclick="updateHours('horas100', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="list-row">
+        <div class="list-label">
+            Normales Finde
+            <span class="list-sublabel">Sábados de 6 a 13hs</span>
+        </div>
+        <div class="stepper-control">
+            <button class="stepper-btn" onclick="updateHours('horasNormFinde', -1)">-</button>
+            <input type="number" id="horasNormFinde" class="stepper-value" value="0" oninput="calculate()">
+            <button class="stepper-btn" onclick="updateHours('horasNormFinde', 1)">+</button>
+        </div>
+    </div>
+</div>
+
+<div class="group-title">Resumen (<span id="diasHabilesStr">0</span> días hábiles)</div>
+<div class="list-group">
+    <div class="list-row">
+        <div class="list-label">
+            Sueldo Base (L a V)
+        </div>
+        <span class="summary-value" id="resSueldoBase">$0</span>
+    </div>
+    
+    <div class="list-row hidden" id="rowResNormalesFinde">
+        <div class="list-label">
+            Normales Finde
+        </div>
+        <span class="summary-value" id="resMontoNormalesFinde">$0</span>
+    </div>
+    
+    <div class="list-row hidden" id="rowResBono">
+        <span class="summary-label">Bonos (Bruto)</span>
+        <span class="summary-value" id="resBono">$0</span>
+    </div>
+    
+    <div class="list-row">
+        <span class="summary-label">Horas Extras</span>
+        <span class="summary-value" id="resExtraBruto">$0</span>
+    </div>
+    
+    <div class="list-row">
+        <div class="list-label">
+            Retenciones (19.5%)
+            <span class="list-sublabel" style="font-size: 10px;">Jubilación, PAMI, OS, UOM</span>
+        </div>
+        <span class="summary-value value-red" id="resImpuestos">$0</span>
+    </div>
+    
+    <div class="list-row total-row">
+        <span class="summary-label">Total a Cobrar Neto</span>
+        <span class="summary-value value-green" id="resTotal">$0</span>
+    </div>
+</div>
+
+<script>
+    let currentQuincena = 1;
+    let diasHabiles = 0;
+    const now = new Date();
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 2 }).format(amount);
+    };
+
+    function haptic() {
+        if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(10);
+    }
+
+    function updateHours(inputId, change) {
+        haptic();
+        const input = document.getElementById(inputId);
+        let val = parseInt(input.value) || 0;
+        val += change;
+        if (val < 0) val = 0;
+        input.value = val;
+        calculate();
+    }
+
+    function getWorkingDays(year, month, quincena) {
+        let count = 0;
+        let startDay = quincena === 1 ? 1 : 16;
+        let endDay = quincena === 1 ? 15 : new Date(year, month + 1, 0).getDate();
+        for (let d = startDay; d <= endDay; d++) {
+            let dayOfWeek = new Date(year, month, d).getDay();
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) count++;
+        }
+        return count;
+    }
+
+    function setQuincena(q) {
+        haptic();
+        currentQuincena = q;
+        document.getElementById('btn1ra').classList.remove('active');
+        document.getElementById('btn2da').classList.remove('active');
+        if(q === 1) document.getElementById('btn1ra').classList.add('active');
+        if(q === 2) document.getElementById('btn2da').classList.add('active');
+        
+        const rowInputBono = document.getElementById('rowInputBono');
+        const rowResBono = document.getElementById('rowResBono');
+        if (q === 2) {
+            rowInputBono.classList.remove('hidden');
+            rowResBono.classList.remove('hidden');
+        } else {
+            rowInputBono.classList.add('hidden');
+            rowResBono.classList.add('hidden');
+        }
+        
+        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        document.getElementById('monthInfo').innerText = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+        diasHabiles = getWorkingDays(now.getFullYear(), now.getMonth(), currentQuincena);
+        document.getElementById('diasHabilesStr').innerText = diasHabiles;
+        
+        calculate();
+    }
+
+    function calculate() {
+        const valorHora = parseFloat(document.getElementById('valorHora').value) || 0;
+        const bonoAmount = parseFloat(document.getElementById('bonoAmount').value) || 0;
+        
+        // Obtener valores de los inputs de horas
+        const horas50 = parseInt(document.getElementById('horas50').value) || 0;
+        const horas100 = parseInt(document.getElementById('horas100').value) || 0;
+        const horasNormFinde = parseInt(document.getElementById('horasNormFinde').value) || 0;
+
+        // 1. Sueldo Base (solo días de semana)
+        const sueldoBaseBruto = diasHabiles * 9 * valorHora;
+        
+        // 2. Bono (solo 2da quincena)
+        let bonoBruto = currentQuincena === 2 ? bonoAmount : 0;
+        
+        // 3. Montos de las horas cargadas
+        const montoNormalesFinde = horasNormFinde * valorHora;
+        const extraBruto = (horas50 * (valorHora * 1.5)) + (horas100 * (valorHora * 2));
+        
+        // Ocultar/Mostrar fila de Normales Finde en el resumen
+        if (horasNormFinde > 0) {
+            document.getElementById('rowResNormalesFinde').classList.remove('hidden');
+            document.getElementById('resMontoNormalesFinde').innerText = formatCurrency(montoNormalesFinde);
+        } else {
+            document.getElementById('rowResNormalesFinde').classList.add('hidden');
+        }
+
+        // 4. Total Bruto
+        const totalBruto = sueldoBaseBruto + montoNormalesFinde + bonoBruto + extraBruto;
+
+        // 5. Retenciones
+        const totalRetenciones = totalBruto * 0.195;
+
+        // 6. Sueldo Neto
+        const totalNeto = totalBruto - totalRetenciones;
+
+        // 7. Actualizar UI
+        document.getElementById('resSueldoBase').innerText = formatCurrency(sueldoBaseBruto);
+        document.getElementById('resBono').innerText = formatCurrency(bonoBruto);
+        document.getElementById('resExtraBruto').innerText = formatCurrency(extraBruto);
+        document.getElementById('resImpuestos').innerText = "-" + formatCurrency(totalRetenciones);
+        document.getElementById('resTotal').innerText = formatCurrency(totalNeto);
+    }
+
+    // Inicializar
+    setQuincena(1);
+</script>
+
+</body>
+</html>
