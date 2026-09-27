@@ -57,6 +57,7 @@
             border-radius: 8px;
             padding: 2px;
             margin: 10px 20px 25px 20px;
+            touch-action: manipulation; /* Evita zoom al cambiar quincena rápido */
         }
 
         .segment-btn {
@@ -108,14 +109,15 @@
             line-height: 1.3;
         }
 
-        /* Ocultar botones nativos de los inputs de número (el 3er botón que veías) */
+        /* Ocultar botones nativos de los inputs de número */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
         input[type="number"] {
-            -moz-appearance: textfield; /* Para otros navegadores */
+            -moz-appearance: textfield; 
+            touch-action: manipulation; /* Bloquea zoom al interactuar con el input */
         }
 
         input[type="number"].config-input {
@@ -155,6 +157,7 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             padding-bottom: 2px;
+            touch-action: manipulation; /* LA MAGIA: Bloquea el doble toque para hacer zoom */
         }
         
         .stepper-btn:active {
@@ -362,22 +365,16 @@
         const valorHora = parseFloat(document.getElementById('valorHora').value) || 0;
         const bonoAmount = parseFloat(document.getElementById('bonoAmount').value) || 0;
         
-        // Obtener valores de los inputs de horas
         const horas50 = parseInt(document.getElementById('horas50').value) || 0;
         const horas100 = parseInt(document.getElementById('horas100').value) || 0;
         const horasNormFinde = parseInt(document.getElementById('horasNormFinde').value) || 0;
 
-        // 1. Sueldo Base (solo días de semana)
         const sueldoBaseBruto = diasHabiles * 9 * valorHora;
-        
-        // 2. Bono (solo 2da quincena)
         let bonoBruto = currentQuincena === 2 ? bonoAmount : 0;
         
-        // 3. Montos de las horas cargadas
         const montoNormalesFinde = horasNormFinde * valorHora;
         const extraBruto = (horas50 * (valorHora * 1.5)) + (horas100 * (valorHora * 2));
         
-        // Ocultar/Mostrar fila de Normales Finde en el resumen
         if (horasNormFinde > 0) {
             document.getElementById('rowResNormalesFinde').classList.remove('hidden');
             document.getElementById('resMontoNormalesFinde').innerText = formatCurrency(montoNormalesFinde);
@@ -385,16 +382,10 @@
             document.getElementById('rowResNormalesFinde').classList.add('hidden');
         }
 
-        // 4. Total Bruto
         const totalBruto = sueldoBaseBruto + montoNormalesFinde + bonoBruto + extraBruto;
-
-        // 5. Retenciones
         const totalRetenciones = totalBruto * 0.195;
-
-        // 6. Sueldo Neto
         const totalNeto = totalBruto - totalRetenciones;
 
-        // 7. Actualizar UI
         document.getElementById('resSueldoBase').innerText = formatCurrency(sueldoBaseBruto);
         document.getElementById('resBono').innerText = formatCurrency(bonoBruto);
         document.getElementById('resExtraBruto').innerText = formatCurrency(extraBruto);
@@ -402,7 +393,6 @@
         document.getElementById('resTotal').innerText = formatCurrency(totalNeto);
     }
 
-    // Inicializar
     setQuincena(1);
 </script>
 
