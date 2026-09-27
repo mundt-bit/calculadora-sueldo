@@ -14,9 +14,17 @@
             --separator-color: #38383A;
             --danger-color: #FF453A;
             --success-color: #32D74B;
-            --segmented-bg: #1C1C1E;
-            --segmented-active: #636366;
             --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* BLOQUEO DE ZOOM GLOBAL PARA iOS */
+        * {
+            touch-action: manipulation;
+        }
+        
+        html, body {
+            touch-action: manipulation;
+            overscroll-behavior-y: none; /* Evita que la pantalla rebote */
         }
 
         body {
@@ -50,14 +58,12 @@
             letter-spacing: -0.1px;
         }
 
-        /* Segmented Control */
         .segmented-control {
             display: flex;
-            background-color: var(--segmented-bg);
+            background-color: #1C1C1E;
             border-radius: 8px;
             padding: 2px;
             margin: 10px 20px 25px 20px;
-            touch-action: manipulation; /* Evita zoom al cambiar quincena rápido */
         }
 
         .segment-btn {
@@ -73,11 +79,10 @@
         }
 
         .segment-btn.active {
-            background-color: var(--segmented-active);
+            background-color: #636366;
             box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
         }
 
-        /* List Groups */
         .list-group {
             background-color: var(--list-bg);
             border-radius: 10px;
@@ -109,22 +114,22 @@
             line-height: 1.3;
         }
 
-        /* Ocultar botones nativos de los inputs de número */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
+        
         input[type="number"] {
             -moz-appearance: textfield; 
-            touch-action: manipulation; /* Bloquea zoom al interactuar con el input */
+            appearance: textfield;
+            font-size: 17px; /* iOS hace zoom si la fuente es menor a 16px. La fijamos en 17px */
         }
 
         input[type="number"].config-input {
             background-color: transparent;
             border: none;
             color: var(--accent-color);
-            font-size: 17px;
             text-align: right;
             width: 100px;
             font-family: var(--font-family);
@@ -140,7 +145,6 @@
             letter-spacing: -0.1px;
         }
 
-        /* Steppers */
         .stepper-control {
             display: flex;
             align-items: center;
@@ -157,7 +161,9 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             padding-bottom: 2px;
-            touch-action: manipulation; /* LA MAGIA: Bloquea el doble toque para hacer zoom */
+            /* Evita que el botón sea seleccionado como texto accidentalmente */
+            user-select: none; 
+            -webkit-user-select: none;
         }
         
         .stepper-btn:active {
@@ -176,7 +182,6 @@
             border-bottom: 1px solid var(--accent-color);
         }
 
-        /* Summary Area */
         .summary-label { font-size: 15px; }
         .summary-value { font-size: 15px; color: var(--text-secondary); }
         .total-row { font-weight: 600; }
@@ -302,6 +307,11 @@
 </div>
 
 <script>
+    // JS ADICIONAL: Bloquea completamente el zoom por doble toque en iOS
+    document.addEventListener('dblclick', function(event) {
+        event.preventDefault();
+    }, { passive: false });
+
     let currentQuincena = 1;
     let diasHabiles = 0;
     const now = new Date();
