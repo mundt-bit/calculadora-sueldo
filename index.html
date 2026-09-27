@@ -36,28 +36,30 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        .header { padding: 20px 20px 10px 20px; }
-        h1 { font-size: 34px; font-weight: 700; margin: 0; letter-spacing: 0.4px; }
-        .month-info { color: var(--text-secondary); font-size: 13px; text-transform: uppercase; font-weight: 600; margin-top: 5px; }
+        /* Reducción de espacios en el Header */
+        .header { padding: 10px 15px 5px 15px; }
+        h1 { font-size: 26px; font-weight: 700; margin: 0; letter-spacing: 0.3px; }
+        .month-info { color: var(--text-secondary); font-size: 11px; text-transform: uppercase; font-weight: 600; margin-top: 2px; }
 
-        /* Main Tabs */
+        /* Main Tabs más compactos */
         .main-tabs {
-            display: flex; gap: 15px; margin: 15px 20px;
+            display: flex; gap: 12px; margin: 8px 15px;
             border-bottom: 1px solid var(--separator-color);
-            padding-bottom: 10px;
+            padding-bottom: 6px;
         }
         .main-tab {
-            font-size: 22px; font-weight: 700; color: var(--text-secondary);
+            font-size: 18px; font-weight: 700; color: var(--text-secondary);
             cursor: pointer; transition: color 0.2s;
         }
         .main-tab.active { color: var(--text-primary); }
 
+        /* Botones de Quincena con menor margen */
         .segmented-control {
             display: flex; background-color: #1C1C1E; border-radius: 8px;
-            padding: 2px; margin: 10px 20px 25px 20px;
+            padding: 2px; margin: 5px 15px 12px 15px;
         }
         .segment-btn {
-            flex: 1; text-align: center; padding: 6px 0; font-size: 13px;
+            flex: 1; text-align: center; padding: 4px 0; font-size: 12px;
             font-weight: 600; color: var(--text-primary); cursor: pointer;
             border-radius: 6px; transition: all 0.2s ease;
         }
@@ -66,54 +68,59 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
         }
 
+        /* Contenedores de Listas más ajustados */
         .list-group {
             background-color: var(--list-bg); border-radius: 10px;
-            margin: 0 20px 24px 20px; overflow: hidden;
+            margin: 0 15px 10px 15px; overflow: hidden;
         }
         .list-row {
             display: flex; justify-content: space-between; align-items: center;
-            min-height: 44px; padding: 10px 16px; border-bottom: 0.5px solid var(--separator-color);
+            min-height: 38px; padding: 6px 14px; border-bottom: 0.5px solid var(--separator-color);
         }
         .list-row:last-child { border-bottom: none; }
-        .list-label { font-size: 17px; display: flex; flex-direction: column; max-width: 65%; }
-        .list-sublabel { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.3; }
+        
+        .list-label { font-size: 15px; display: flex; flex-direction: column; max-width: 65%; }
+        .list-sublabel { font-size: 11px; color: var(--text-secondary); margin-top: 1px; line-height: 1.2; }
 
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type="number"] { -moz-appearance: textfield; appearance: textfield; font-size: 17px; }
+        /* Font-size 16px obligatorio para evitar zoom en iOS */
+        input[type="number"] { -moz-appearance: textfield; appearance: textfield; font-size: 16px; }
 
         input[type="number"].config-input {
             background-color: transparent; border: none; color: var(--accent-color);
-            text-align: right; width: 100px; font-family: var(--font-family); padding: 0;
+            text-align: right; width: 90px; font-family: var(--font-family); padding: 0;
         }
         input[type="number"].config-input:focus { outline: none; color: var(--text-primary); }
         
-        .input-wide { width: 140px !important; }
+        .input-wide { width: 120px !important; }
 
         .group-title {
-            font-size: 13px; color: var(--text-secondary); text-transform: uppercase;
-            margin: 0 20px 6px 36px; letter-spacing: -0.1px;
+            font-size: 11px; color: var(--text-secondary); text-transform: uppercase;
+            margin: 0 15px 4px 25px; letter-spacing: -0.1px;
         }
 
-        .stepper-control { display: flex; align-items: center; gap: 12px; }
+        /* Steppers un poco más chicos */
+        .stepper-control { display: flex; align-items: center; gap: 8px; }
         .stepper-btn {
-            width: 32px; height: 32px; border-radius: 50%; background-color: #2C2C2E;
-            color: var(--accent-color); border: none; font-size: 22px;
+            width: 28px; height: 28px; border-radius: 50%; background-color: #2C2C2E;
+            color: var(--accent-color); border: none; font-size: 20px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; padding-bottom: 2px; user-select: none; -webkit-user-select: none;
         }
         .stepper-btn:active { opacity: 0.7; }
         .stepper-value {
-            font-size: 19px; width: 35px; text-align: center; color: var(--text-primary);
+            font-size: 16px; width: 30px; text-align: center; color: var(--text-primary);
             border: none; background: transparent; font-family: var(--font-family); padding: 0;
         }
 
-        .summary-label { font-size: 15px; }
-        .summary-value { font-size: 15px; color: var(--text-secondary); text-align: right; }
-        .summary-usd { font-size: 12px; color: var(--accent-color); display: block; margin-top: 2px; }
-        .total-row { font-weight: 600; }
-        .total-row .summary-label { font-size: 17px; }
-        .total-row .summary-value { font-size: 20px; color: var(--text-primary); }
+        /* Resumen optimizado */
+        .summary-label { font-size: 14px; }
+        .summary-value { font-size: 14px; color: var(--text-secondary); text-align: right; }
+        .summary-usd { font-size: 11px; color: var(--accent-color); display: block; margin-top: 1px; }
+        .total-row { font-weight: 600; padding-top: 8px; padding-bottom: 8px; }
+        .total-row .summary-label { font-size: 15px; }
+        .total-row .summary-value { font-size: 18px; color: var(--text-primary); }
         .value-red { color: var(--danger-color) !important; }
         .value-green { color: var(--success-color) !important; }
         .value-warning { color: var(--warning-color) !important; }
@@ -121,8 +128,8 @@
 
         /* API Status Badge */
         .api-status {
-            font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #2C2C2E;
-            color: var(--text-secondary); margin-left: 8px; vertical-align: middle;
+            font-size: 10px; padding: 2px 5px; border-radius: 4px; background: #2C2C2E;
+            color: var(--text-secondary); margin-left: 6px; vertical-align: middle;
         }
         .api-status.ok { color: var(--success-color); }
         .api-status.error { color: var(--danger-color); }
@@ -150,27 +157,27 @@
         <div class="list-row">
             <div class="list-label">Valor por hora</div>
             <div>
-                <span style="color:var(--text-secondary);"></span>
+                <span style="color:var(--text-secondary);">$</span>
                 <input type="number" id="valorHora" class="config-input input-wide" value="5772.04" step="0.01" oninput="calculate()">
             </div>
         </div>
         <div class="list-row hidden" id="rowInputBono">
             <div class="list-label">
                 Bono / Premios
-                <span class="list-sublabel">Toca para editar (Bruto)</span>
+                <span class="list-sublabel">Toca para editar</span>
             </div>
             <div>
-                <span style="color:var(--text-secondary);"></span>
+                <span style="color:var(--text-secondary);">$</span>
                 <input type="number" id="bonoAmount" class="config-input input-wide" value="300000" oninput="calculate()">
             </div>
         </div>
     </div>
 
-    <div class="group-title">Carga de Horas (Total Quincena)</div>
+    <div class="group-title">Carga de Horas</div>
     <div class="list-group">
         <div class="list-row">
             <div class="list-label">
-                Extras al 50%
+                Al 50%
                 <span class="list-sublabel">L a V (después de 15hs)</span>
             </div>
             <div class="stepper-control">
@@ -181,8 +188,8 @@
         </div>
         <div class="list-row">
             <div class="list-label">
-                Extras al 100%
-                <span class="list-sublabel">Sábados > 13hs o Domingos</span>
+                Al 100%
+                <span class="list-sublabel">Sáb > 13hs o Domingos</span>
             </div>
             <div class="stepper-control">
                 <button class="stepper-btn" onclick="updateHours('horas100', -1)">-</button>
@@ -206,7 +213,7 @@
     <div class="group-title">Resumen (<span id="diasHabilesStr">0</span> días hábiles)</div>
     <div class="list-group">
         <div class="list-row">
-            <div class="list-label">Sueldo Base (L a V)</div>
+            <div class="list-label">Sueldo Base</div>
             <span class="summary-value" id="resSueldoBase">$0</span>
         </div>
         <div class="list-row hidden" id="rowResNormalesFinde">
@@ -224,12 +231,12 @@
         <div class="list-row">
             <div class="list-label">
                 Retenciones (19.5%)
-                <span class="list-sublabel" style="font-size: 10px;">Jubilación, PAMI, OS, UOM</span>
+                <span class="list-sublabel">Jubilación, PAMI, OS, UOM</span>
             </div>
             <span class="summary-value value-red" id="resImpuestos">$0</span>
         </div>
         <div class="list-row total-row">
-            <span class="summary-label">Total a Cobrar Neto</span>
+            <span class="summary-label">A Cobrar Neto</span>
             <span class="summary-value value-green" id="resTotal">$0</span>
         </div>
     </div>
@@ -243,7 +250,7 @@
         <div class="list-row">
             <div class="list-label">
                 Dólar Blue
-                <span class="list-sublabel">API Dolarito <span id="apiStatus" class="api-status">Conectando...</span></span>
+                <span class="list-sublabel">Dolarito <span id="apiStatus" class="api-status">...</span></span>
             </div>
             <div>
                 <span style="color:var(--text-secondary);">$</span>
@@ -256,7 +263,7 @@
                 <span class="list-sublabel">Pérdida de valor esperada</span>
             </div>
             <div>
-                <input type="number" id="devaluacion" class="config-input" style="width:50px; color:var(--warning-color);" value="4" oninput="calcularVentas()">
+                <input type="number" id="devaluacion" class="config-input" style="width:40px; color:var(--warning-color);" value="4" oninput="calcularVentas()">
                 <span style="color:var(--text-secondary);">%</span>
             </div>
         </div>
@@ -265,21 +272,21 @@
     <div class="group-title">Datos de la Venta</div>
     <div class="list-group">
         <div class="list-row">
-            <div class="list-label">Precio de Compra</div>
+            <div class="list-label">Precio Compra</div>
             <div>
                 <span style="color:var(--text-secondary);">$</span>
                 <input type="number" id="v_compra" class="config-input input-wide" value="0" placeholder="0" oninput="calcularVentas()">
             </div>
         </div>
         <div class="list-row">
-            <div class="list-label">Precio de Venta</div>
+            <div class="list-label">Precio Venta</div>
             <div>
                 <span style="color:var(--text-secondary);">$</span>
                 <input type="number" id="v_venta" class="config-input input-wide" value="0" placeholder="0" oninput="calcularVentas()">
             </div>
         </div>
         
-        <div class="segmented-control" style="margin: 15px 16px;">
+        <div class="segmented-control" style="margin: 10px 14px;">
             <div class="segment-btn active" id="btn1Pago" onclick="setMetodoPago(1)">1 Pago</div>
             <div class="segment-btn" id="btnCuotas" onclick="setMetodoPago(2)">En Cuotas</div>
         </div>
@@ -299,7 +306,7 @@
         <div class="list-row">
             <div class="list-label">
                 Ganancia Nominal
-                <span class="list-sublabel">Sin descontar devaluación</span>
+                <span class="list-sublabel">Sin descontar inflación</span>
             </div>
             <div style="text-align: right;">
                 <span class="summary-value" id="resGananciaNominal">$0</span>
@@ -317,11 +324,9 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <script>
-    // JS: Bloqueo de zoom
     document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
 
     const formatCurrency = (amount) => {
@@ -336,7 +341,6 @@
         if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(10);
     }
 
-    // NAVEGACIÓN PRINCIPAL
     function switchMainTab(tab) {
         haptic();
         if(tab === 'sueldo') {
@@ -349,13 +353,11 @@
             document.getElementById('tabSueldo').classList.remove('active');
             document.getElementById('viewVentas').classList.remove('hidden');
             document.getElementById('viewSueldo').classList.add('hidden');
-            fetchDolar(); // Buscar el dolar al entrar a la pestaña
+            fetchDolar();
         }
     }
 
-    // ==========================================
-    // LÓGICA SUELDO (Existente)
-    // ==========================================
+    // SUELDO
     let currentQuincena = 1;
     let diasHabiles = 0;
     const now = new Date();
@@ -397,7 +399,7 @@
             document.getElementById('rowResBono').classList.add('hidden');
         }
         
-        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         document.getElementById('monthInfo').innerText = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
         diasHabiles = getWorkingDays(now.getFullYear(), now.getMonth(), currentQuincena);
         document.getElementById('diasHabilesStr').innerText = diasHabiles;
@@ -435,17 +437,14 @@
         document.getElementById('resTotal').innerText = formatCurrency(totalNeto);
     }
 
-    // ==========================================
-    // LÓGICA VENTAS (Nueva)
-    // ==========================================
-    let tipoPago = 1; // 1 = Contado, 2 = Cuotas
+    // VENTAS
+    let tipoPago = 1;
 
     function fetchDolar() {
         const statusEl = document.getElementById('apiStatus');
         statusEl.innerText = "Conectando...";
         statusEl.className = "api-status";
 
-        // Usamos DolarApi.com, que es abierta, gratuita y muy estable para Argentina
         fetch('https://dolarapi.com/v1/dolares/blue')
             .then(response => response.json())
             .then(data => {
@@ -457,7 +456,7 @@
                 }
             })
             .catch(error => {
-                console.error("Error obteniendo dolar:", error);
+                console.error("Error API:", error);
                 statusEl.innerText = "Error API";
                 statusEl.classList.add("error");
             });
@@ -476,7 +475,7 @@
         } else {
             document.getElementById('btnCuotas').classList.add('active');
             document.getElementById('rowCuotas').classList.remove('hidden');
-            document.getElementById('txtGananciaReal').innerText = "Descontando devaluación mensual";
+            document.getElementById('txtGananciaReal').innerText = "Descontando inflación";
         }
         calcularVentas();
     }
@@ -486,8 +485,8 @@
         const input = document.getElementById('v_cuotas');
         let val = parseInt(input.value) || 2;
         val += change;
-        if (val < 2) val = 2; // Minimo 2 cuotas
-        if (val > 24) val = 24; // Maximo 24 cuotas razonable
+        if (val < 2) val = 2;
+        if (val > 24) val = 24;
         input.value = val;
         calcularVentas();
     }
@@ -499,21 +498,14 @@
         const inflacionMensual = (parseFloat(document.getElementById('devaluacion').value) || 0) / 100;
         const cuotas = parseInt(document.getElementById('v_cuotas').value) || 1;
 
-        // 1. Ganancia Nominal (sin importar la inflación)
         const gananciaNominal = venta - compra;
-        
-        // 2. Cálculo del Valor Presente (Ganancia Real)
         let valorRealVenta = 0;
 
         if (tipoPago === 1 || cuotas <= 1 || inflacionMensual === 0) {
-            // Un pago al contado
             valorRealVenta = venta;
         } else {
-            // Cobro en cuotas: Se descuenta la inflación acumulada mes a mes
             const valorCuota = venta / cuotas;
             for (let mes = 1; mes <= cuotas; mes++) {
-                // Formula de Valor Presente Neto (VPN)
-                // Cuota / (1 + Tasa)^mes
                 let valorCuotaPresente = valorCuota / Math.pow(1 + inflacionMensual, mes);
                 valorRealVenta += valorCuotaPresente;
             }
@@ -521,7 +513,6 @@
 
         const gananciaReal = valorRealVenta - compra;
 
-        // Actualizar Interfaz NOMINAL
         const resNominal = document.getElementById('resGananciaNominal');
         resNominal.innerText = formatCurrency(gananciaNominal);
         document.getElementById('resGananciaNominalUSD').innerText = formatUSD(gananciaNominal / dolar);
@@ -529,7 +520,6 @@
         if(gananciaNominal < 0) resNominal.className = "summary-value value-red";
         else resNominal.className = "summary-value";
 
-        // Actualizar Interfaz REAL
         const resReal = document.getElementById('resGananciaReal');
         resReal.innerText = formatCurrency(gananciaReal);
         document.getElementById('resGananciaRealUSD').innerText = formatUSD(gananciaReal / dolar);
@@ -538,7 +528,6 @@
         else resReal.className = "summary-value value-green";
     }
 
-    // Iniciar con Sueldo
     setQuincena(1);
 </script>
 
